@@ -275,6 +275,28 @@
     }
     .stop-card h4 { margin: 0 0 8px; font-size: 20px; }
     .stop-card p { margin: 0; line-height: 1.7; color: #516a80; }
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .stop > .quick-actions {
+      grid-column: 2;
+      margin-top: -4px;
+    }
+    .xhs-btn {
+      min-height: 32px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 999px;
+      background: #ff2442;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(255,36,66,.18);
+    }
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -317,6 +339,10 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
+    }
+    .island-wrap {
+      display: grid;
+      gap: 8px;
     }
     .island {
       min-height: 360px;
@@ -385,46 +411,57 @@
       background: #e7f5f9;
     }
     .route-viz {
-      padding: 24px;
-      background:
-        linear-gradient(180deg, rgba(231,247,251,.9), rgba(255,255,255,1)),
-        radial-gradient(circle at 18% 20%, rgba(18,167,216,.18), transparent 28%),
-        radial-gradient(circle at 84% 28%, rgba(255,126,103,.18), transparent 24%);
+      background: linear-gradient(180deg, #e9f8fc 0%, #f8fdff 76%, #fff 100%);
     }
     .route-note {
-      margin: 0 0 22px;
+      margin: 0;
+      padding: 18px 24px 0;
       color: #516a80;
       line-height: 1.65;
     }
     .route-track {
       position: relative;
-      min-height: 220px;
-      padding: 78px 22px 34px;
+      min-height: 520px;
+      margin: 22px 24px 24px;
       border-radius: 8px;
       border: 1px solid rgba(16,38,61,.08);
-      background: rgba(255,255,255,.72);
+      background:
+        radial-gradient(circle at 18% 24%, rgba(255,255,255,.9) 0 58px, transparent 60px),
+        radial-gradient(circle at 76% 24%, rgba(255,255,255,.74) 0 82px, transparent 84px),
+        radial-gradient(circle at 55% 68%, rgba(255,246,223,.95) 0 130px, transparent 132px),
+        linear-gradient(135deg, #d9f4fb 0%, #bfe9f4 45%, #f5fbf8 100%);
       overflow: hidden;
+    }
+    .route-track::before {
+      content: "";
+      position: absolute;
+      inset: 32px;
+      border-radius: 42% 58% 46% 54%;
+      background: rgba(255,255,255,.42);
+      filter: blur(1px);
     }
     .route-line {
       position: absolute;
-      left: 8%;
-      right: 8%;
-      top: 106px;
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #12a7d8, #5f6df0, #ff7e67);
-      box-shadow: 0 10px 22px rgba(18,167,216,.18);
+      inset: 0;
+      pointer-events: none;
+    }
+    .route-line svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     .route-car {
       position: absolute;
-      left: 8%;
-      top: 97px;
+      left: 0;
+      top: 0;
       width: 34px;
       height: 18px;
       border-radius: 9px 12px 6px 6px;
       background: #ff7e67;
       box-shadow: 0 8px 18px rgba(255,126,103,.34);
-      animation: driveRoute 4.2s ease-in-out infinite;
+      offset-path: path("M 70 372 C 145 178 278 152 368 238 C 456 322 512 376 620 278 C 692 214 720 150 795 116");
+      offset-rotate: auto;
+      animation: driveRoute 5.2s ease-in-out 1 forwards;
       z-index: 2;
     }
     .route-car::before {
@@ -449,14 +486,12 @@
       box-shadow: 18px 0 0 #10263d;
     }
     .route-stops {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
+      position: absolute;
+      inset: 0;
+      z-index: 3;
     }
     .route-stop {
+      position: absolute;
       display: grid;
       justify-items: center;
       max-width: 150px;
@@ -469,17 +504,56 @@
     .route-dot {
       width: 22px;
       height: 22px;
-      margin-bottom: 54px;
+      margin-bottom: 10px;
       border: 5px solid #fff;
       border-radius: 50%;
       background: #12a7d8;
       box-shadow: 0 8px 18px rgba(16,38,61,.14);
     }
+    .route-stop span:last-child {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.86);
+      box-shadow: 0 8px 18px rgba(16,38,61,.08);
+    }
     @keyframes driveRoute {
-      0% { left: 8%; }
-      45% { left: 50%; }
-      72% { left: 72%; }
-      100% { left: 92%; }
+      from { offset-distance: 0%; }
+      to { offset-distance: 100%; }
+    }
+    .xhs-viz {
+      padding: 20px 24px 24px;
+      background: #fff;
+    }
+    .xhs-note {
+      margin: 0 0 16px;
+      color: #516a80;
+      line-height: 1.65;
+    }
+    .xhs-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .xhs-post {
+      padding: 14px 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(16,38,61,.08);
+      background: #fff7f8;
+    }
+    .xhs-post strong {
+      display: block;
+      color: #10263d;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .xhs-post span {
+      display: inline-flex;
+      margin-right: 8px;
+      color: #ff2442;
+      font-size: 12px;
+      font-weight: 900;
     }
     @media (max-width: 940px) {
       .day { grid-template-columns: 1fr; }
@@ -552,6 +626,7 @@
               <p>在 Moon Beach 一带集合，放行李、简单休整。酒店海边可以先拍一轮开场照。</p>
               <div class="tags"><span class="tag">Hotel</span><span class="tag">集合点</span></div>
             </button>
+            <div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="月亮滩酒店" data-xhs-posts="月亮滩酒店海边拍照机位合集|1.2w 赞|适合收藏的酒店海景攻略||Moon Beach 入住体验和周边玩法|8600 赞|酒店、沙滩、浮潜一篇看完||冲绳恩纳村亲子酒店怎么选|5200 赞|适合带小孩参考">小红书</button></div>
           </div>
           <div class="stop">
             <div class="time">16:00</div>
@@ -560,6 +635,7 @@
               <p>沿 Depot Island、海边步道、摩天轮附近慢逛。傍晚找海景位等日落，晚饭后再拍夜景。</p>
               <div class="tags"><span class="tag">Sunset</span><span class="tag">Shopping</span><span class="tag">Night view</span></div>
             </button>
+            <div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="美国村" data-xhs-posts="美国村日落机位和逛吃路线|2.3w 赞|Depot Island 到海边步道路线||冲绳美国村不踩雷餐厅清单|1.6w 赞|甜品、汉堡、海景位都有||美国村夜景拍照攻略|9800 赞|适合傍晚到晚上连拍">小红书</button></div>
           </div>
         </div>
         <div class="grid">
@@ -585,11 +661,11 @@
         </div>
         <p class="tap-note">上午先在月亮滩浮潜，后半天再走北部线；地点卡点开为站内地图弹窗。</p>
         <div class="timeline">
-          <div class="stop"><div class="time">09:30</div><button class="stop-card is-map" type="button" data-map-title="月亮滩浮潜" data-map="Moon Beach Onna Okinawa snorkeling"><h4>月亮滩浮潜</h4><p>上午先在酒店附近下水，节奏舒服一点。浮潜项目看当天海况，提前确认装备、预约和集合时间。</p><div class="tags"><span class="tag">Snorkeling</span><span class="tag">Hotel beach</span></div></button></div>
+          <div class="stop"><div class="time">09:30</div><button class="stop-card is-map" type="button" data-map-title="月亮滩浮潜" data-map="Moon Beach Onna Okinawa snorkeling"><h4>月亮滩浮潜</h4><p>上午先在酒店附近下水，节奏舒服一点。浮潜项目看当天海况，提前确认装备、预约和集合时间。</p><div class="tags"><span class="tag">Snorkeling</span><span class="tag">Hotel beach</span></div></button><div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="月亮滩浮潜" data-xhs-posts="月亮滩浮潜体验和预约注意|1.1w 赞|装备、海况、集合点参考||恩纳村浮潜新手友好攻略|9300 赞|适合第一次下水的人||冲绳带小孩浮潜怎么玩|6800 赞|亲子安全和项目选择">小红书</button></div></div>
           <div class="stop"><div class="time">12:00</div><button class="stop-card is-map" type="button" data-map-title="恩纳午餐" data-map="Onna Okinawa restaurants"><h4>吃完饭再出发</h4><p>午餐可以在恩纳附近解决，避免空腹开北部线。想省时间就选酒店附近或 58 号线沿线。</p><div class="tags"><span class="tag">Lunch</span><span class="tag">Onna</span></div></button></div>
-          <div class="stop"><div class="time">13:30</div><button class="stop-card is-map" type="button" data-map-title="万座毛" data-map="Cape Manzamo Okinawa"><h4>万座毛</h4><p>万座毛停留 40-60 分钟，象鼻崖和海面颜色很出片。注意景区门票和停车动线。</p><div class="tags"><span class="tag">Cape</span><span class="tag">Photo stop</span></div></button></div>
-          <div class="stop"><div class="time">15:30</div><button class="stop-card is-map" type="button" data-map-title="冲绳美丽海水族馆" data-map="Okinawa Churaumi Aquarium"><h4>冲绳美丽海水族馆</h4><p>重点看黑潮之海大水槽、鲸鲨和鬼蝠魟。旁边海洋博公园也能顺路走走。</p><div class="tags"><span class="tag">Whale shark</span><span class="tag">Aquarium</span></div></button></div>
-          <div class="stop"><div class="time">17:30</div><button class="stop-card is-map" type="button" data-map-title="濑底岛" data-map="Sesoko Beach Okinawa"><h4>返程去濑底岛玩一下</h4><p>过濑底大桥到海滩收尾。海上摩托、透明独木舟等（小孩也能玩！）类项目看当天海况和营业时间，提前预约。</p><div class="tags"><span class="tag">Jet ski</span><span class="tag">Beach</span><span class="tag">Bridge</span></div></button></div>
+          <div class="stop"><div class="time">13:30</div><button class="stop-card is-map" type="button" data-map-title="万座毛" data-map="Cape Manzamo Okinawa"><h4>万座毛</h4><p>万座毛停留 40-60 分钟，象鼻崖和海面颜色很出片。注意景区门票和停车动线。</p><div class="tags"><span class="tag">Cape</span><span class="tag">Photo stop</span></div></button><div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="万座毛" data-xhs-posts="万座毛拍照角度和游览时间|1.8w 赞|象鼻崖、海景和停车动线||冲绳万座毛值不值得去|1.1w 赞|门票、停留时间、顺路安排||万座毛亲子轻松游攻略|7200 赞|适合老人小孩的节奏">小红书</button></div></div>
+          <div class="stop"><div class="time">15:30</div><button class="stop-card is-map" type="button" data-map-title="冲绳美丽海水族馆" data-map="Okinawa Churaumi Aquarium"><h4>冲绳美丽海水族馆</h4><p>重点看黑潮之海大水槽、鲸鲨和鬼蝠魟。旁边海洋博公园也能顺路走走。</p><div class="tags"><span class="tag">Whale shark</span><span class="tag">Aquarium</span></div></button><div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="冲绳美丽海水族馆" data-xhs-posts="美丽海水族馆避开人流路线|2.6w 赞|鲸鲨水槽和拍照点整理||水族馆亲子游完整攻略|1.9w 赞|门票、表演、停车信息||水族馆周边顺路怎么玩|1.2w 赞|海洋博公园和北部路线">小红书</button></div></div>
+          <div class="stop"><div class="time">17:30</div><button class="stop-card is-map" type="button" data-map-title="濑底岛" data-map="Sesoko Beach Okinawa"><h4>返程去濑底岛玩一下</h4><p>过濑底大桥到海滩收尾。海上摩托、透明独木舟等（小孩也能玩！）类项目看当天海况和营业时间，提前预约。</p><div class="tags"><span class="tag">Jet ski</span><span class="tag">Beach</span><span class="tag">Bridge</span></div></button><div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="濑底岛" data-xhs-posts="濑底岛透明独木舟和海上项目|1.5w 赞|亲子友好项目参考||濑底海滩拍照和游玩攻略|9800 赞|桥、海滩、停车点整理||冲绳北部水上项目怎么选|7600 赞|海上摩托和透明船对比">小红书</button></div></div>
         </div>
         <div class="grid">
           <button class="rec" type="button" data-map-title="きしもと食堂" data-map="Kishimoto Shokudo Motobu Okinawa"><strong>きしもと食堂 Kishimoto Shokudo</strong><p>本部老牌冲绳荞麦面，适合水族馆前后快速解决一餐。</p><div class="mini">推荐：冲绳 soba、三枚肉</div></button>
@@ -614,8 +690,8 @@
         <p class="tap-note">佳新酒店和海边营地还没确定准确地点，暂时不做弹窗；国际通、濑长岛和店铺可以点开地图。</p>
         <div class="timeline">
           <div class="stop"><div class="time">AM</div><div class="stop-card is-static"><h4>自然醒，换酒店去佳新酒店</h4><p>上午留给收拾、退房、移动。到那霸后先寄存或入住，后面全程轻装。</p><div class="tags"><span class="tag">Hotel change</span><span class="tag">Slow morning</span></div></div></div>
-          <div class="stop"><div class="time">12:30</div><button class="stop-card is-map" type="button" data-map-title="国际通" data-map="Kokusai-dori Naha Okinawa"><h4>国际通逛吃</h4><p>从国际通主街走到牧志公设市场、平和通，午餐、伴手礼、咖啡和小吃一路串。</p><div class="tags"><span class="tag">Kokusai Dori</span><span class="tag">Market</span><span class="tag">Shopping</span></div></button></div>
-          <div class="stop"><div class="time">17:00</div><button class="stop-card is-map" type="button" data-map-title="濑长岛 Umikaji Terrace" data-map="Senagajima Umikaji Terrace Okinawa"><h4>二选一：濑长岛 or 海边营地 BBQ</h4><p>濑长岛适合夕阳、飞机起降和轻松吃喝；如果想更有仪式感，可以订海边 BBQ，给李总过生日。</p><div class="tags"><span class="tag">Birthday</span><span class="tag">Sunset</span><span class="tag">BBQ</span></div></button></div>
+          <div class="stop"><div class="time">12:30</div><button class="stop-card is-map" type="button" data-map-title="国际通" data-map="Kokusai-dori Naha Okinawa"><h4>国际通逛吃</h4><p>从国际通主街走到牧志公设市场、平和通，午餐、伴手礼、咖啡和小吃一路串。</p><div class="tags"><span class="tag">Kokusai Dori</span><span class="tag">Market</span><span class="tag">Shopping</span></div></button><div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="国际通" data-xhs-posts="国际通逛吃伴手礼路线|2.1w 赞|小吃、药妆、市场一条线||那霸国际通不踩雷美食|1.7w 赞|饭团、冲绳料理和甜品||牧志市场海鲜攻略|1.1w 赞|加工、点单和价格参考">小红书</button></div></div>
+          <div class="stop"><div class="time">17:00</div><button class="stop-card is-map" type="button" data-map-title="濑长岛 Umikaji Terrace" data-map="Senagajima Umikaji Terrace Okinawa"><h4>二选一：濑长岛 or 海边营地 BBQ</h4><p>濑长岛适合夕阳、飞机起降和轻松吃喝；如果想更有仪式感，可以订海边 BBQ，给李总过生日。</p><div class="tags"><span class="tag">Birthday</span><span class="tag">Sunset</span><span class="tag">BBQ</span></div></button><div class="quick-actions"><button class="xhs-btn" type="button" data-xhs-title="濑长岛" data-xhs-posts="濑长岛夕阳和飞机拍照点|1.9w 赞|Umikaji Terrace 机位合集||濑长岛吃喝小店路线|1.2w 赞|适合傍晚散步和晚餐||那霸附近生日氛围地推荐|8600 赞|适合轻松拍照庆生">小红书</button></div></div>
         </div>
         <div class="grid">
           <button class="rec" type="button" data-map-title="猪肉蛋饭团本店" data-map="Pork Tamago Onigiri Kokusai dori Naha"><strong>猪肉蛋饭团本店</strong><p>国际通附近很适合买来边走边吃，适合作为第一站小食。</p><div class="mini">推荐：海葡萄、炸虾、苦瓜组合</div></button>
@@ -640,16 +716,22 @@
         </div>
         <p class="tap-note">只保留两个离岛备选。点岛屿卡片会在当前页面弹出地图，不跳转。</p>
         <div class="island-grid">
-          <button class="island" type="button" data-map-title="渡嘉敷岛 Tokashiki" data-map="Tokashiki Island Okinawa" style="--photo: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');">
-            <h4>渡嘉敷岛 Tokashiki</h4>
-            <p>路线：那霸泊港 → 渡嘉敷港。高速船约 35-40 分钟，普通渡轮约 70 分钟。适合阿波连海滩浮潜、玻璃船、海龟概率局。</p>
-            <div class="tags"><span class="tag">浮潜</span><span class="tag">阿波连海滩</span><span class="tag">一日往返</span></div>
-          </button>
-          <button class="island" type="button" data-map-title="纳嘉鲁岛 Nagannu" data-map="Nagannu Island Okinawa" style="--photo: url('https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=900&q=80');">
-            <h4>纳嘉鲁岛 Nagannu</h4>
-            <p>路线：那霸泊港附近出发 → 纳嘉鲁岛，船程约 20 分钟。适合轻量一日游、白沙滩、浮潜、海上项目和拍照。</p>
-            <div class="tags"><span class="tag">白沙滩</span><span class="tag">近那霸</span><span class="tag">轻松出海</span></div>
-          </button>
+          <div class="island-wrap">
+            <button class="island" type="button" data-map-title="渡嘉敷岛 Tokashiki" data-map="Tokashiki Island Okinawa" style="--photo: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');">
+              <h4>渡嘉敷岛 Tokashiki</h4>
+              <p>路线：那霸泊港 → 渡嘉敷港。高速船约 35-40 分钟，普通渡轮约 70 分钟。适合阿波连海滩浮潜、玻璃船、海龟概率局。</p>
+              <div class="tags"><span class="tag">浮潜</span><span class="tag">阿波连海滩</span><span class="tag">一日往返</span></div>
+            </button>
+            <button class="xhs-btn" type="button" data-xhs-title="渡嘉敷岛" data-xhs-posts="渡嘉敷岛一日往返详细攻略|2.4w 赞|船票、阿波连海滩、浮潜安排||庆良间蓝到底值不值|1.8w 赞|渡嘉敷拍照和海况参考||渡嘉敷亲子浮潜避坑|1.1w 赞|适合带小孩看的项目">小红书</button>
+          </div>
+          <div class="island-wrap">
+            <button class="island" type="button" data-map-title="纳嘉鲁岛 Nagannu" data-map="Nagannu Island Okinawa" style="--photo: url('https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=900&q=80');">
+              <h4>纳嘉鲁岛 Nagannu</h4>
+              <p>路线：那霸泊港附近出发 → 纳嘉鲁岛，船程约 20 分钟。适合轻量一日游、白沙滩、浮潜、海上项目和拍照。</p>
+              <div class="tags"><span class="tag">白沙滩</span><span class="tag">近那霸</span><span class="tag">轻松出海</span></div>
+            </button>
+            <button class="xhs-btn" type="button" data-xhs-title="纳嘉鲁岛" data-xhs-posts="纳嘉鲁岛半日到一日游攻略|1.7w 赞|近那霸、船程短、适合轻松玩||Nagannu 白沙滩拍照指南|1.2w 赞|海滩、浮潜和预约信息||冲绳离岛怎么选：纳嘉鲁篇|8800 赞|适合时间不多的人">小红书</button>
+          </div>
         </div>
         <div class="note">离岛当天一定看天气和船班。海况差会停航，建议前一天晚上确认官网/船公司通知，并准备市区 Plan B。</div>
       </div>
@@ -671,6 +753,10 @@
           <div class="route-stops" id="routeStops"></div>
         </div>
       </div>
+      <div class="xhs-viz" id="xhsViz" hidden>
+        <p class="xhs-note">这里先放可编辑的“小红书高赞参考”占位列表。后面你给我真实标题、链接和点赞数，我可以换成真实数据。</p>
+        <ul class="xhs-list" id="xhsList"></ul>
+      </div>
     </div>
   </div>
 
@@ -681,6 +767,8 @@
     const routeViz = document.querySelector("#routeViz");
     const routeNote = document.querySelector("#routeNote");
     const routeStops = document.querySelector("#routeStops");
+    const xhsViz = document.querySelector("#xhsViz");
+    const xhsList = document.querySelector("#xhsList");
     const closeButton = document.querySelector(".modal-close");
 
     function showModal(title) {
@@ -692,6 +780,7 @@
 
     function openMap(title, query) {
       routeViz.hidden = true;
+      xhsViz.hidden = true;
       mapFrame.hidden = false;
       mapFrame.src = "https://www.google.com/maps?q=" + encodeURIComponent(query) + "&output=embed";
       showModal(title);
@@ -700,16 +789,43 @@
     function openRoute(title, note, stopsText) {
       mapFrame.hidden = true;
       mapFrame.src = "";
+      xhsViz.hidden = true;
       routeViz.hidden = false;
       routeNote.textContent = note || "路线动画";
       routeStops.innerHTML = "";
-      stopsText.split("|").filter(Boolean).forEach((stop) => {
+      document.querySelector(".route-line").innerHTML = '<svg viewBox="0 0 860 520" preserveAspectRatio="none" aria-hidden="true"><path d="M 70 372 C 145 178 278 152 368 238 C 456 322 512 376 620 278 C 692 214 720 150 795 116" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="18" stroke-linecap="round"/><path d="M 70 372 C 145 178 278 152 368 238 C 456 322 512 376 620 278 C 692 214 720 150 795 116" fill="none" stroke="url(#routeGradient)" stroke-width="7" stroke-linecap="round"/><defs><linearGradient id="routeGradient" x1="0" x2="1"><stop offset="0%" stop-color="#12a7d8"/><stop offset="55%" stop-color="#5f6df0"/><stop offset="100%" stop-color="#ff7e67"/></linearGradient></defs></svg>';
+      const positions = [[8,72], [28,27], [47,42], [67,58], [88,18]];
+      stopsText.split("|").filter(Boolean).forEach((stop, index) => {
         const item = document.createElement("div");
         item.className = "route-stop";
+        const position = positions[Math.min(index, positions.length - 1)];
+        item.style.left = position[0] + "%";
+        item.style.top = position[1] + "%";
+        item.style.transform = "translate(-50%, -50%)";
         item.innerHTML = `<span class="route-dot"></span><span>${stop}</span>`;
         routeStops.appendChild(item);
       });
+      const car = document.querySelector(".route-car");
+      car.style.animation = "none";
+      void car.offsetWidth;
+      car.style.animation = "driveRoute 5.2s ease-in-out 1 forwards";
       showModal(title || "路线图");
+    }
+
+    function openXhs(title, postsText) {
+      mapFrame.hidden = true;
+      mapFrame.src = "";
+      routeViz.hidden = true;
+      xhsViz.hidden = false;
+      xhsList.innerHTML = "";
+      postsText.split("||").filter(Boolean).forEach((post) => {
+        const [postTitle, likes, note] = post.split("|");
+        const item = document.createElement("li");
+        item.className = "xhs-post";
+        item.innerHTML = `<strong>${postTitle}</strong><span>${likes}</span><span>${note}</span>`;
+        xhsList.appendChild(item);
+      });
+      showModal(title + " · 小红书参考");
     }
 
     function closeMap() {
@@ -729,6 +845,9 @@
           openRoute(item.dataset.routeTitle, item.dataset.routeNote, item.dataset.routeStops);
         }
       });
+    });
+    document.querySelectorAll("[data-xhs-title]").forEach((item) => {
+      item.addEventListener("click", () => openXhs(item.dataset.xhsTitle, item.dataset.xhsPosts));
     });
     closeButton.addEventListener("click", closeMap);
     modal.addEventListener("click", (event) => {
