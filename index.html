@@ -173,6 +173,71 @@
       font-size: 14px;
       font-weight: 750;
     }
+    .trip-notice {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
+      gap: 16px;
+      width: min(1320px, 100%);
+      margin: 0 auto;
+      padding: 22px 6vw 0;
+    }
+    .notice-card,
+    .message-board {
+      border: 1px solid rgba(16,38,61,.08);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 14px 34px rgba(16,38,61,.07);
+    }
+    .notice-card {
+      padding: 18px;
+    }
+    .notice-card h3,
+    .message-board h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .notice-card ul {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding-left: 20px;
+      color: #516a80;
+      line-height: 1.65;
+      font-weight: 700;
+    }
+    .message-board {
+      display: grid;
+      gap: 10px;
+      padding: 18px;
+    }
+    .message-board p {
+      margin: 0;
+      color: #516a80;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .message-board textarea {
+      min-height: 112px;
+      width: 100%;
+      resize: vertical;
+      border: 1px solid rgba(16,38,61,.14);
+      border-radius: 8px;
+      padding: 12px;
+      color: #10263d;
+      font: inherit;
+      line-height: 1.55;
+      background: #fbfdff;
+    }
+    .message-board textarea:focus {
+      outline: 2px solid rgba(18,167,216,.24);
+      border-color: rgba(18,167,216,.45);
+    }
+    .board-status {
+      min-height: 18px;
+      color: #0a85a8;
+      font-size: 12px;
+      font-weight: 850;
+    }
     .timeline {
       display: grid;
       gap: 14px;
@@ -433,10 +498,12 @@
       .day-head { position: relative; top: auto; min-height: 260px; }
       .day-head h2 { margin-top: 70px; }
       .grid { grid-template-columns: 1fr; }
+      .trip-notice { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
       .hero { min-height: 82vh; padding: 36px 5vw 30px; }
       main, .tabs { padding-left: 5vw; padding-right: 5vw; }
+      .trip-notice { padding-left: 5vw; padding-right: 5vw; }
       .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .panel { padding: 16px; }
       .stop { grid-template-columns: 58px 1fr; }
@@ -468,6 +535,23 @@
     <a href="#day3">Day 3 那霸生日局</a>
     <a href="#day4">Day 4 离岛出海</a>
   </nav>
+
+  <section class="trip-notice" aria-label="行前注意事项">
+    <div class="notice-card">
+      <h3>行前注意事项</h3>
+      <ul>
+        <li>大家一定要做好防晒，海边紫外线很猛，帽子、防晒霜、墨镜都带上。</li>
+        <li>给小朋友准备好沙滩鞋，冲绳沙滩偏粗，很多珊瑚碎，光脚容易硌脚。</li>
+        <li>干饭是临时贴，有想吃的可以发群里，也可以在这里留言；有忌口、过敏一定提前告知哟！</li>
+      </ul>
+    </div>
+    <div class="message-board">
+      <h3>留言板</h3>
+      <p>想吃什么、忌口过敏、临时想法都可以先记这里。内容会保存在当前设备浏览器里。</p>
+      <textarea id="tripMessage" placeholder="例如：想吃海鲜 / 小朋友不吃辣 / 对坚果过敏..."></textarea>
+      <div class="board-status" id="messageStatus" aria-live="polite"></div>
+    </div>
+  </section>
 
   <main>
     <section class="day" id="day1">
@@ -631,6 +715,21 @@
     const xhsViz = document.querySelector("#xhsViz");
     const xhsList = document.querySelector("#xhsList");
     const closeButton = document.querySelector(".modal-close");
+    const tripMessage = document.querySelector("#tripMessage");
+    const messageStatus = document.querySelector("#messageStatus");
+    const messageKey = "okinawa-trip-message";
+
+    if (tripMessage) {
+      tripMessage.value = localStorage.getItem(messageKey) || "";
+      tripMessage.addEventListener("input", () => {
+        localStorage.setItem(messageKey, tripMessage.value);
+        messageStatus.textContent = "已在本机保存";
+        window.clearTimeout(tripMessage.statusTimer);
+        tripMessage.statusTimer = window.setTimeout(() => {
+          messageStatus.textContent = "";
+        }, 1400);
+      });
+    }
 
     function showModal(title) {
       mapTitle.textContent = title || "地图";
