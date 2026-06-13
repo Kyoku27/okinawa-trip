@@ -174,13 +174,11 @@
       font-weight: 750;
     }
     .trip-notice {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
-      gap: 16px;
-      width: min(1320px, 100%);
-      margin: 0 auto;
-      padding: 22px 6vw 0;
-    }
+    display: block;
+    width: min(1320px,100%);
+    margin: 0 auto;
+    padding: 22px 6vw 0;
+}
     .notice-card,
     .message-board {
       border: 1px solid rgba(16,38,61,.08);
@@ -197,14 +195,18 @@
       font-size: 18px;
     }
     .notice-card ul {
-      display: grid;
-      gap: 9px;
-      margin: 0;
-      padding-left: 20px;
-      color: #516a80;
-      line-height: 1.65;
-      font-weight: 700;
-    }
+  list-style: disc;
+  margin: 0;
+  padding-left: 24px;
+  color: #516a80;
+  font-weight: 700;
+}
+
+.notice-card li {
+  white-space: nowrap;
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
     .message-board {
       display: grid;
       gap: 10px;
@@ -540,17 +542,12 @@
     <div class="notice-card">
       <h3>行前注意事项</h3>
       <ul>
-        <li>大家一定要做好防晒，海边紫外线很猛，帽子、防晒霜、墨镜都带上。</li>
+        <li>大家一定要做好防晒，海边紫外线很猛，帽子、防晒霜、墨镜都带上。 </li>
         <li>给小朋友准备好沙滩鞋，冲绳沙滩偏粗，很多珊瑚碎，光脚容易硌脚。</li>
-        <li>干饭是临时贴，有想吃的可以发群里，也可以在这里留言；有忌口、过敏一定提前告知哟！</li>
+        <li>干饭是临时贴，有想吃的可以发群里；有忌口、过敏一定提前告知哟！</li>
       </ul>
     </div>
-    <div class="message-board">
-      <h3>留言板</h3>
-      <p>想吃什么、忌口过敏、临时想法都可以先记这里。内容会保存在当前设备浏览器里。</p>
-      <textarea id="tripMessage" placeholder="例如：想吃海鲜 / 小朋友不吃辣 / 对坚果过敏..."></textarea>
-      <div class="board-status" id="messageStatus" aria-live="polite"></div>
-    </div>
+    
   </section>
 
   <main>
@@ -785,3 +782,4 @@
   </script>
 </body>
 </html>
+
