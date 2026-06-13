@@ -651,11 +651,12 @@
       mapFrame.src = "";
       xhsViz.hidden = false;
       xhsList.innerHTML = "";
+      const linkTarget = window.matchMedia("(pointer: coarse)").matches ? "_self" : "_blank";
       postsText.split("||").filter(Boolean).forEach((post) => {
         const [postTitle, likes, note, url] = post.split("|");
         const item = document.createElement("li");
         item.className = "xhs-post";
-        item.innerHTML = `<a class="xhs-link" href="${url || "#"}" target="_blank" rel="noreferrer"><strong>${postTitle}</strong><span>${likes}</span><span>${note}</span></a>`;
+        item.innerHTML = `<a class="xhs-link" href="${url || "#"}" target="${linkTarget}" rel="noreferrer"><strong>${postTitle}</strong><span>${likes}</span><span>${note}</span></a>`;
         xhsList.appendChild(item);
       });
       showModal(title + " · 小红书参考");
