@@ -403,12 +403,64 @@
       font-size: 22px;
       cursor: pointer;
     }
+    .map-shell {
+      position: relative;
+      overflow: hidden;
+      background: #e7f5f9;
+    }
     .map-frame {
       display: block;
       width: 100%;
       height: min(62vh, 560px);
       border: 0;
       background: #e7f5f9;
+    }
+    .map-route-car {
+      position: absolute;
+      left: 57%;
+      top: 84%;
+      z-index: 3;
+      display: none;
+      width: 38px;
+      height: 20px;
+      border-radius: 10px 14px 7px 7px;
+      background: #ff7e67;
+      box-shadow: 0 10px 22px rgba(16,38,61,.22);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+    .map-route-car::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: -8px;
+      width: 18px;
+      height: 10px;
+      border-radius: 9px 9px 2px 2px;
+      background: #10263d;
+    }
+    .map-route-car::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      bottom: -4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10263d;
+      box-shadow: 20px 0 0 #10263d;
+    }
+    .map-shell.is-route .map-route-car {
+      display: block;
+      animation: mapRouteDrive 5.6s ease-in-out 1 forwards;
+    }
+    @keyframes mapRouteDrive {
+      0% { left: 57%; top: 84%; transform: translate(-50%, -50%) rotate(-20deg); }
+      18% { left: 51%; top: 72%; transform: translate(-50%, -50%) rotate(-64deg); }
+      36% { left: 49%; top: 55%; transform: translate(-50%, -50%) rotate(-82deg); }
+      56% { left: 53%; top: 38%; transform: translate(-50%, -50%) rotate(-42deg); }
+      76% { left: 57%; top: 26%; transform: translate(-50%, -50%) rotate(-76deg); }
+      100% { left: 54%; top: 12%; transform: translate(-50%, -50%) rotate(-92deg); }
     }
     .route-viz {
       background: linear-gradient(180deg, #e9f8fc 0%, #f8fdff 76%, #fff 100%);
@@ -744,7 +796,10 @@
         <strong id="mapTitle">地图</strong>
         <button class="modal-close" type="button" aria-label="关闭地图">×</button>
       </div>
-      <iframe class="map-frame" id="mapFrame" title="Google Maps preview" loading="lazy"></iframe>
+      <div class="map-shell" id="mapShell">
+        <iframe class="map-frame" id="mapFrame" title="Google Maps preview" loading="lazy"></iframe>
+        <div class="map-route-car" id="mapRouteCar" aria-hidden="true"></div>
+      </div>
       <div class="route-viz" id="routeViz" hidden>
         <p class="route-note" id="routeNote"></p>
         <div class="route-track">
@@ -763,7 +818,9 @@
   <script>
     const modal = document.querySelector("#mapModal");
     const mapTitle = document.querySelector("#mapTitle");
+    const mapShell = document.querySelector("#mapShell");
     const mapFrame = document.querySelector("#mapFrame");
+    const mapRouteCar = document.querySelector("#mapRouteCar");
     const routeViz = document.querySelector("#routeViz");
     const routeNote = document.querySelector("#routeNote");
     const routeStops = document.querySelector("#routeStops");
@@ -778,16 +835,23 @@
       closeButton.focus();
     }
 
-    function openMap(title, query) {
+    function openMap(title, query, showRouteCar = false) {
       routeViz.hidden = true;
       xhsViz.hidden = true;
-      mapFrame.hidden = false;
+      mapShell.hidden = false;
+      mapShell.classList.toggle("is-route", showRouteCar);
       mapFrame.src = "https://www.google.com/maps?q=" + encodeURIComponent(query) + "&output=embed";
+      if (showRouteCar) {
+        mapRouteCar.style.animation = "none";
+        void mapRouteCar.offsetWidth;
+        mapRouteCar.style.animation = "";
+      }
       showModal(title);
     }
 
     function openRoute(title, note, stopsText) {
-      mapFrame.hidden = true;
+      mapShell.hidden = true;
+      mapShell.classList.remove("is-route");
       mapFrame.src = "";
       xhsViz.hidden = true;
       routeViz.hidden = false;
@@ -813,7 +877,8 @@
     }
 
     function openXhs(title, postsText) {
-      mapFrame.hidden = true;
+      mapShell.hidden = true;
+      mapShell.classList.remove("is-route");
       mapFrame.src = "";
       routeViz.hidden = true;
       xhsViz.hidden = false;
@@ -832,10 +897,14 @@
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
       mapFrame.src = "";
+      mapShell.classList.remove("is-route");
     }
 
     document.querySelectorAll("[data-map]").forEach((item) => {
-      item.addEventListener("click", () => openMap(item.dataset.mapTitle, item.dataset.map));
+      item.addEventListener("click", () => {
+        const isRouteMap = item.classList.contains("map-btn") && item.textContent.includes("路线");
+        openMap(item.dataset.mapTitle, item.dataset.map, isRouteMap);
+      });
     });
     document.querySelectorAll("[data-route-title]").forEach((item) => {
       item.addEventListener("click", () => openRoute(item.dataset.routeTitle, item.dataset.routeNote, item.dataset.routeStops));
