@@ -199,11 +199,48 @@
       font-weight: 900;
       box-shadow: 0 14px 28px rgba(18,167,216,.22);
     }
+    .stop-card,
+    .rec,
+    .island {
+      position: relative;
+      text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
     .stop-card {
+      display: block;
       padding: 16px;
       border-radius: 8px;
       background: #f6fbfd;
       border: 1px solid rgba(16,38,61,.07);
+    }
+    .stop-card:hover,
+    .rec:hover {
+      transform: translateY(-2px);
+      border-color: rgba(18,167,216,.38);
+      box-shadow: 0 16px 36px rgba(16,38,61,.1);
+    }
+    .stop-card::after,
+    .rec::after,
+    .island::after {
+      content: "Google Maps";
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(16,38,61,.88);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 850;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: .18s ease;
+    }
+    .stop-card:hover::after,
+    .rec:hover::after,
+    .island:hover::after {
+      opacity: 1;
+      transform: translateY(0);
     }
     .stop-card h4 { margin: 0 0 8px; font-size: 20px; }
     .stop-card p { margin: 0; line-height: 1.7; color: #516a80; }
@@ -228,6 +265,7 @@
       margin-top: 18px;
     }
     .rec {
+      display: block;
       min-height: 170px;
       padding: 15px;
       border-radius: 8px;
@@ -263,11 +301,21 @@
         var(--photo) center / cover;
       overflow: hidden;
     }
+    .island:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(16,38,61,.16);
+    }
     .island h4 { margin: 0 0 8px; font-size: 24px; }
     .island p { margin: 0; line-height: 1.65; color: rgba(255,255,255,.86); }
     .island .tags .tag {
       color: #10263d;
       background: rgba(255,255,255,.86);
+    }
+    .tap-note {
+      margin: 0 0 18px;
+      color: #5a7083;
+      font-size: 14px;
+      font-weight: 750;
     }
     @media (max-width: 940px) {
       .day { grid-template-columns: 1fr; }
@@ -283,6 +331,7 @@
       .stop { grid-template-columns: 58px 1fr; }
       .time { width: 58px; font-size: 13px; }
       .stop:not(:last-child)::after { left: 28px; }
+      .stop-card::after, .rec::after, .island::after { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -318,38 +367,39 @@
       <div class="panel">
         <div class="route-title">
           <h3>月亮滩酒店 → 美国村</h3>
-          <a class="map-btn" href="https://www.google.com/maps/dir/Hotel+Moon+Beach,+Onna/American+Village,+Chatan,+Okinawa" target="_blank" rel="noreferrer">打开路线</a>
+          <a class="map-btn" href="https://www.google.com/maps/dir/Hotel+Moon+Beach,+Onna/American+Village,+Chatan,+Okinawa" target="_blank" rel="noreferrer">打开整段路线</a>
         </div>
+        <p class="tap-note">点任意地点或店铺卡片，可以直接打开 Google Maps。</p>
         <div class="timeline">
           <div class="stop">
             <div class="time">AM</div>
-            <div class="stop-card">
+            <a class="stop-card" href="https://www.google.com/maps/search/car+rental+Naha+Airport+Okinawa" target="_blank" rel="noreferrer">
               <h4>任导取车</h4>
               <p>先把车和导航搞定，建议顺手买水、车载充电线、零食。后续几天基本靠自驾串起来。</p>
               <div class="tags"><span class="tag">取车</span><span class="tag">补给</span></div>
-            </div>
+            </a>
           </div>
           <div class="stop">
             <div class="time">14:30</div>
-            <div class="stop-card">
+            <a class="stop-card" href="https://www.google.com/maps/search/Hotel+Moon+Beach+Onna+Okinawa" target="_blank" rel="noreferrer">
               <h4>月亮滩酒店集合</h4>
               <p>在 Moon Beach 一带集合，放行李、简单休整。酒店海边可以先拍一轮开场照。</p>
               <div class="tags"><span class="tag">Hotel</span><span class="tag">集合点</span></div>
-            </div>
+            </a>
           </div>
           <div class="stop">
             <div class="time">16:00</div>
-            <div class="stop-card">
+            <a class="stop-card" href="https://www.google.com/maps/search/American+Village+Chatan+Okinawa" target="_blank" rel="noreferrer">
               <h4>美国村逛吃</h4>
               <p>沿 Depot Island、海边步道、摩天轮附近慢逛。傍晚找海景位等日落，晚饭后再拍夜景。</p>
               <div class="tags"><span class="tag">Sunset</span><span class="tag">Shopping</span><span class="tag">Night view</span></div>
-            </div>
+            </a>
           </div>
         </div>
         <div class="grid">
-          <div class="rec"><strong>The Calif Kitchen Okinawa</strong><p>海景早午餐/晚餐氛围店，适合坐窗边或露台，看美国村海岸线。</p><div class="mini">推荐：海景座位、汉堡、甜点</div></div>
-          <div class="rec"><strong>Seaside Cafe Hanon</strong><p>美国村人气松饼咖啡店，甜口下午茶很适合日落前垫一下。</p><div class="mini">推荐：舒芙蕾松饼、咖啡</div></div>
-          <div class="rec"><strong>Blue Seal Ice Cream</strong><p>冲绳经典冰淇淋，紫薯、盐金楚糕、芒果口味都很有当地感。</p><div class="mini">推荐：边走边吃，拍照好看</div></div>
+          <a class="rec" href="https://www.google.com/maps/search/The+Calif+Kitchen+Okinawa" target="_blank" rel="noreferrer"><strong>The Calif Kitchen Okinawa</strong><p>海景早午餐/晚餐氛围店，适合坐窗边或露台，看美国村海岸线。</p><div class="mini">推荐：海景座位、汉堡、甜点</div></a>
+          <a class="rec" href="https://www.google.com/maps/search/Seaside+Cafe+Hanon+Okinawa" target="_blank" rel="noreferrer"><strong>Seaside Cafe Hanon</strong><p>美国村人气松饼咖啡店，甜口下午茶很适合日落前垫一下。</p><div class="mini">推荐：舒芙蕾松饼、咖啡</div></a>
+          <a class="rec" href="https://www.google.com/maps/search/Blue+Seal+Ice+Cream+American+Village+Okinawa" target="_blank" rel="noreferrer"><strong>Blue Seal Ice Cream</strong><p>冲绳经典冰淇淋，紫薯、盐金楚糕、芒果口味都很有当地感。</p><div class="mini">推荐：边走边吃，拍照好看</div></a>
         </div>
         <div class="note">日落建议提前 30-40 分钟到海边占位置。美国村停车位周末会紧张，尽量别卡最后一刻到。</div>
       </div>
@@ -364,18 +414,19 @@
       <div class="panel">
         <div class="route-title">
           <h3>恩纳 → 万座毛 → 美丽海水族馆 → 濑底岛</h3>
-          <a class="map-btn" href="https://www.google.com/maps/dir/Hotel+Moon+Beach,+Onna/Cape+Manzamo/Okinawa+Churaumi+Aquarium/Sesoko+Beach" target="_blank" rel="noreferrer">打开路线</a>
+          <a class="map-btn" href="https://www.google.com/maps/dir/Hotel+Moon+Beach,+Onna/Cape+Manzamo/Okinawa+Churaumi+Aquarium/Sesoko+Beach" target="_blank" rel="noreferrer">打开整段路线</a>
         </div>
+        <p class="tap-note">点地点卡可以看到单点地图，点路线按钮可以看当天完整路线。</p>
         <div class="timeline">
-          <div class="stop"><div class="time">11:30</div><div class="stop-card"><h4>中午出发去万座毛</h4><p>不用太早，睡够再走。万座毛停留 40-60 分钟，象鼻崖和海面颜色很出片。</p><div class="tags"><span class="tag">Cape</span><span class="tag">Photo stop</span></div></div></div>
-          <div class="stop"><div class="time">13:00</div><div class="stop-card"><h4>北部午餐穿插</h4><p>从恩纳往本部走，午餐可以选冲绳面、海景 Pizza 或塔可饭，别把水族馆时间压太死。</p><div class="tags"><span class="tag">Lunch</span><span class="tag">Motobu</span></div></div></div>
-          <div class="stop"><div class="time">15:00</div><div class="stop-card"><h4>冲绳美丽海水族馆</h4><p>重点看黑潮之海大水槽、鲸鲨和鬼蝠魟。旁边海洋博公园也能顺路走走。</p><div class="tags"><span class="tag">Whale shark</span><span class="tag">Aquarium</span></div></div></div>
-          <div class="stop"><div class="time">17:30</div><div class="stop-card"><h4>返程去濑底岛玩一下</h4><p>过濑底大桥到海滩收尾。海上摩托、拖曳类项目看当天海况和营业时间，建议提前预约。</p><div class="tags"><span class="tag">Jet ski</span><span class="tag">Beach</span><span class="tag">Bridge</span></div></div></div>
+          <div class="stop"><div class="time">11:30</div><a class="stop-card" href="https://www.google.com/maps/search/Cape+Manzamo+Okinawa" target="_blank" rel="noreferrer"><h4>中午出发去万座毛</h4><p>不用太早，睡够再走。万座毛停留 40-60 分钟，象鼻崖和海面颜色很出片。</p><div class="tags"><span class="tag">Cape</span><span class="tag">Photo stop</span></div></a></div>
+          <div class="stop"><div class="time">13:00</div><a class="stop-card" href="https://www.google.com/maps/search/Motobu+Okinawa+restaurants" target="_blank" rel="noreferrer"><h4>北部午餐穿插</h4><p>从恩纳往本部走，午餐可以选冲绳面、海景 Pizza 或塔可饭，别把水族馆时间压太死。</p><div class="tags"><span class="tag">Lunch</span><span class="tag">Motobu</span></div></a></div>
+          <div class="stop"><div class="time">15:00</div><a class="stop-card" href="https://www.google.com/maps/search/Okinawa+Churaumi+Aquarium" target="_blank" rel="noreferrer"><h4>冲绳美丽海水族馆</h4><p>重点看黑潮之海大水槽、鲸鲨和鬼蝠魟。旁边海洋博公园也能顺路走走。</p><div class="tags"><span class="tag">Whale shark</span><span class="tag">Aquarium</span></div></a></div>
+          <div class="stop"><div class="time">17:30</div><a class="stop-card" href="https://www.google.com/maps/search/Sesoko+Beach+Okinawa+jet+ski" target="_blank" rel="noreferrer"><h4>返程去濑底岛玩一下</h4><p>过濑底大桥到海滩收尾。海上摩托、拖曳类项目看当天海况和营业时间，建议提前预约。</p><div class="tags"><span class="tag">Jet ski</span><span class="tag">Beach</span><span class="tag">Bridge</span></div></a></div>
         </div>
         <div class="grid">
-          <div class="rec"><strong>きしもと食堂 Kishimoto Shokudo</strong><p>本部老牌冲绳荞麦面，适合水族馆前后快速解决一餐。</p><div class="mini">推荐：冲绳 soba、三枚肉</div></div>
-          <div class="rec"><strong>Pizza Cafe Kajinhou 花人逢</strong><p>山坡海景 Pizza 名店，视野很强，但热门时段可能排队，适合不赶时间。</p><div class="mini">推荐：Pizza、海景座</div></div>
-          <div class="rec"><strong>Captain Kangaroo</strong><p>名护/本部方向很受欢迎的汉堡选择，北部自驾中途补能很合适。</p><div class="mini">推荐：美式汉堡、薯条</div></div>
+          <a class="rec" href="https://www.google.com/maps/search/Kishimoto+Shokudo+Motobu+Okinawa" target="_blank" rel="noreferrer"><strong>きしもと食堂 Kishimoto Shokudo</strong><p>本部老牌冲绳荞麦面，适合水族馆前后快速解决一餐。</p><div class="mini">推荐：冲绳 soba、三枚肉</div></a>
+          <a class="rec" href="https://www.google.com/maps/search/Pizza+Cafe+Kajinhou+Okinawa" target="_blank" rel="noreferrer"><strong>Pizza Cafe Kajinhou 花人逢</strong><p>山坡海景 Pizza 名店，视野很强，但热门时段可能排队，适合不赶时间。</p><div class="mini">推荐：Pizza、海景座</div></a>
+          <a class="rec" href="https://www.google.com/maps/search/Captain+Kangaroo+Okinawa" target="_blank" rel="noreferrer"><strong>Captain Kangaroo</strong><p>名护/本部方向很受欢迎的汉堡选择，北部自驾中途补能很合适。</p><div class="mini">推荐：美式汉堡、薯条</div></a>
         </div>
       </div>
     </section>
@@ -389,17 +440,18 @@
       <div class="panel">
         <div class="route-title">
           <h3>自然醒 → 佳新酒店 → 国际通 → 濑长岛 / 海边 BBQ</h3>
-          <a class="map-btn" href="https://www.google.com/maps/dir/Kokusai-dori,+Naha/Senagajima+Umikaji+Terrace" target="_blank" rel="noreferrer">打开路线</a>
+          <a class="map-btn" href="https://www.google.com/maps/dir/Kokusai-dori,+Naha/Senagajima+Umikaji+Terrace" target="_blank" rel="noreferrer">打开整段路线</a>
         </div>
+        <p class="tap-note">酒店名后面你确定后，我可以把“佳新酒店”的链接换成准确地点。</p>
         <div class="timeline">
-          <div class="stop"><div class="time">AM</div><div class="stop-card"><h4>自然醒，换酒店去佳新酒店</h4><p>上午留给收拾、退房、移动。到那霸后先寄存或入住，后面全程轻装。</p><div class="tags"><span class="tag">Hotel change</span><span class="tag">Slow morning</span></div></div></div>
-          <div class="stop"><div class="time">12:30</div><div class="stop-card"><h4>国际通逛吃</h4><p>从国际通主街走到牧志公设市场、平和通，午餐、伴手礼、咖啡和小吃一路串。</p><div class="tags"><span class="tag">Kokusai Dori</span><span class="tag">Market</span><span class="tag">Shopping</span></div></div></div>
-          <div class="stop"><div class="time">17:00</div><div class="stop-card"><h4>二选一：濑长岛 or 海边营地 BBQ</h4><p>濑长岛适合夕阳、飞机起降和轻松吃喝；如果想更有仪式感，可以订海边 BBQ，给李总过生日。</p><div class="tags"><span class="tag">Birthday</span><span class="tag">Sunset</span><span class="tag">BBQ</span></div></div></div>
+          <div class="stop"><div class="time">AM</div><a class="stop-card" href="https://www.google.com/maps/search/Naha+hotel+Okinawa" target="_blank" rel="noreferrer"><h4>自然醒，换酒店去佳新酒店</h4><p>上午留给收拾、退房、移动。到那霸后先寄存或入住，后面全程轻装。</p><div class="tags"><span class="tag">Hotel change</span><span class="tag">Slow morning</span></div></a></div>
+          <div class="stop"><div class="time">12:30</div><a class="stop-card" href="https://www.google.com/maps/search/Kokusai-dori+Naha+Okinawa" target="_blank" rel="noreferrer"><h4>国际通逛吃</h4><p>从国际通主街走到牧志公设市场、平和通，午餐、伴手礼、咖啡和小吃一路串。</p><div class="tags"><span class="tag">Kokusai Dori</span><span class="tag">Market</span><span class="tag">Shopping</span></div></a></div>
+          <div class="stop"><div class="time">17:00</div><a class="stop-card" href="https://www.google.com/maps/search/Senagajima+Umikaji+Terrace+Okinawa" target="_blank" rel="noreferrer"><h4>二选一：濑长岛 or 海边营地 BBQ</h4><p>濑长岛适合夕阳、飞机起降和轻松吃喝；如果想更有仪式感，可以订海边 BBQ，给李总过生日。</p><div class="tags"><span class="tag">Birthday</span><span class="tag">Sunset</span><span class="tag">BBQ</span></div></a></div>
         </div>
         <div class="grid">
-          <div class="rec"><strong>猪肉蛋饭团本店</strong><p>国际通附近很适合买来边走边吃，适合作为第一站小食。</p><div class="mini">推荐：海葡萄、炸虾、苦瓜组合</div></div>
-          <div class="rec"><strong>ゆうなんぎい Yunangi</strong><p>那霸老牌冲绳料理，想吃海葡萄、豆腐、拉夫提、苦瓜炒蛋可以放这里。</p><div class="mini">推荐：冲绳家常菜</div></div>
-          <div class="rec"><strong>第一牧志公设市场</strong><p>海鲜、猪肉料理、伴手礼集中区，适合分头买、楼上加工或附近找小店。</p><div class="mini">推荐：海鲜、当地食材</div></div>
+          <a class="rec" href="https://www.google.com/maps/search/Pork+Tamago+Onigiri+Kokusai+dori+Naha" target="_blank" rel="noreferrer"><strong>猪肉蛋饭团本店</strong><p>国际通附近很适合买来边走边吃，适合作为第一站小食。</p><div class="mini">推荐：海葡萄、炸虾、苦瓜组合</div></a>
+          <a class="rec" href="https://www.google.com/maps/search/Yunangi+Naha+Okinawa" target="_blank" rel="noreferrer"><strong>ゆうなんぎい Yunangi</strong><p>那霸老牌冲绳料理，想吃海葡萄、豆腐、拉夫提、苦瓜炒蛋可以放这里。</p><div class="mini">推荐：冲绳家常菜</div></a>
+          <a class="rec" href="https://www.google.com/maps/search/Makishi+Public+Market+Naha" target="_blank" rel="noreferrer"><strong>第一牧志公设市场</strong><p>海鲜、猪肉料理、伴手礼集中区，适合分头买、楼上加工或附近找小店。</p><div class="mini">推荐：海鲜、当地食材</div></a>
         </div>
         <div class="note">生日局建议现在先定方向：濑长岛省心、好拍；海边 BBQ 更有派对感，但需要提前预约、确认雨天方案和蛋糕保存。</div>
       </div>
@@ -414,29 +466,30 @@
       <div class="panel">
         <div class="route-title">
           <h3>离岛选项、出海路线和时间</h3>
-          <a class="map-btn" href="https://www.google.com/maps/search/Tomari+Port+Naha+Okinawa" target="_blank" rel="noreferrer">那霸泊港</a>
+          <a class="map-btn" href="https://www.google.com/maps/search/Tomari+Port+Naha+Okinawa" target="_blank" rel="noreferrer">那霸泊港地图</a>
         </div>
+        <p class="tap-note">点每个岛的图片卡片，可以打开对应岛屿的 Google Maps。</p>
         <div class="island-grid">
-          <div class="island" style="--photo: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');">
+          <a class="island" href="https://www.google.com/maps/search/Tokashiki+Island+Okinawa" target="_blank" rel="noreferrer" style="--photo: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');">
             <h4>渡嘉敷岛 Tokashiki</h4>
             <p>路线：那霸泊港 → 渡嘉敷港。高速船约 35-40 分钟，普通渡轮约 70 分钟。适合阿波连海滩浮潜、玻璃船、海龟概率局。</p>
             <div class="tags"><span class="tag">浮潜</span><span class="tag">阿波连海滩</span><span class="tag">一日往返</span></div>
-          </div>
-          <div class="island" style="--photo: url('https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=900&q=80');">
+          </a>
+          <a class="island" href="https://www.google.com/maps/search/Zamami+Island+Okinawa" target="_blank" rel="noreferrer" style="--photo: url('https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=900&q=80');">
             <h4>座间味岛 Zamami</h4>
             <p>路线：那霸泊港 → 座间味港。高速船约 50 分钟，普通渡轮约 1.5 小时。古座间味海滩、阿真海滩、SUP、独木舟、观景台都很强。</p>
             <div class="tags"><span class="tag">Kerama Blue</span><span class="tag">SUP</span><span class="tag">海滩跳岛</span></div>
-          </div>
-          <div class="island" style="--photo: url('https://images.unsplash.com/photo-1526958977630-bc61b30a2009?auto=format&fit=crop&w=900&q=80');">
+          </a>
+          <a class="island" href="https://www.google.com/maps/search/Minna+Island+Okinawa" target="_blank" rel="noreferrer" style="--photo: url('https://images.unsplash.com/photo-1526958977630-bc61b30a2009?auto=format&fit=crop&w=900&q=80');">
             <h4>水纳岛 Minna Island</h4>
             <p>路线：本部渡久地港 → 水纳岛，船程约 15-25 分钟。最适合和北部行程结合，玩香蕉船、浮潜、拖曳伞和白沙滩。</p>
             <div class="tags"><span class="tag">白沙滩</span><span class="tag">水上项目</span><span class="tag">北部顺路</span></div>
-          </div>
-          <div class="island" style="--photo: url('https://images.unsplash.com/photo-1468413253725-0d5181091126?auto=format&fit=crop&w=900&q=80');">
+          </a>
+          <a class="island" href="https://www.google.com/maps/search/Kume+Island+Okinawa" target="_blank" rel="noreferrer" style="--photo: url('https://images.unsplash.com/photo-1468413253725-0d5181091126?auto=format&fit=crop&w=900&q=80');">
             <h4>久米岛 Kume Island</h4>
             <p>路线：那霸机场飞久米岛约 35 分钟，或那霸泊港坐船约 3-4 小时。适合 Hatenohama 沙洲、潜水、环岛自驾，但更建议留足一整天。</p>
             <div class="tags"><span class="tag">Hatenohama</span><span class="tag">潜水</span><span class="tag">高预算选项</span></div>
-          </div>
+          </a>
         </div>
         <div class="note">离岛当天一定看天气和船班。海况差会停航，建议前一天晚上确认官网/船公司通知，并准备市区 Plan B。</div>
       </div>
