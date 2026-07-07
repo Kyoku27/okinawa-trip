@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Okinawa Food Map | 冲绳美食地图</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: #10263d;
+      background: #eef8fb;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    .hero {
+      min-height: 56vh;
+      display: grid;
+      align-items: end;
+      padding: 54px 7vw 34px;
+      color: #fff;
+      background:
+        linear-gradient(180deg, rgba(7, 27, 43, .2), rgba(7, 27, 43, .78)),
+        url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=80") center / cover;
+    }
+    .eyebrow {
+      display: inline-flex;
+      min-height: 32px;
+      align-items: center;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.2);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    h1 {
+      max-width: 820px;
+      margin: 18px 0 10px;
+      font-size: clamp(44px, 8vw, 92px);
+      line-height: .96;
+      letter-spacing: 0;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 0;
+      color: rgba(255,255,255,.84);
+      line-height: 1.75;
+      font-size: 18px;
+    }
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      padding: 12px 7vw;
+      background: rgba(238,248,251,.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(16,38,61,.08);
+    }
+    .top-nav a {
+      display: inline-flex;
+      min-height: 34px;
+      align-items: center;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: #fff;
+      color: #10263d;
+      text-decoration: none;
+      font-weight: 850;
+      box-shadow: 0 8px 18px rgba(16,38,61,.06);
+    }
+    main {
+      display: grid;
+      gap: 22px;
+      padding: 34px 7vw 72px;
+    }
+    .map-layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 520px) 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .panel {
+      border: 1px solid rgba(16,38,61,.08);
+      border-radius: 8px;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 18px 48px rgba(16,38,61,.08);
+    }
+    .map-panel {
+      position: sticky;
+      top: 74px;
+      padding: 18px;
+    }
+    .map-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .map-head h2 { margin: 0; font-size: 22px; }
+    .map-head span { color: #5a7083; font-size: 13px; font-weight: 800; }
+    .okinawa-map {
+      position: relative;
+      min-height: 680px;
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(255,255,255,.7) 0 58px, transparent 60px),
+        linear-gradient(180deg, #bfeffc 0%, #dff8ff 100%);
+      border: 1px solid rgba(16,38,61,.08);
+    }
+    .island-shape {
+      position: absolute;
+      inset: 4% 14% 4% 28%;
+      background:
+        linear-gradient(135deg, rgba(168,220,177,.95), rgba(238,244,198,.96));
+      clip-path: polygon(50% 0%, 62% 7%, 60% 14%, 68% 22%, 63% 29%, 71% 38%, 60% 50%, 67% 61%, 55% 70%, 58% 82%, 47% 100%, 37% 84%, 42% 72%, 30% 64%, 38% 52%, 28% 42%, 39% 32%, 34% 22%, 44% 13%);
+      filter: drop-shadow(0 18px 28px rgba(16,38,61,.14));
+    }
+    .route-line {
+      position: absolute;
+      left: 46%;
+      top: 9%;
+      width: 10px;
+      height: 78%;
+      border-radius: 999px;
+      background: linear-gradient(#0fadd2, #5f6df0, #ff7e67);
+      opacity: .62;
+      transform: rotate(8deg);
+    }
+    .pin {
+      position: absolute;
+      z-index: 2;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 999px 999px 999px 6px;
+      background: #ff2442;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(255,36,66,.3);
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+    .pin span {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      transform: rotate(45deg);
+    }
+    .pin.is-active,
+    .pin:hover {
+      background: #10263d;
+      box-shadow: 0 14px 32px rgba(16,38,61,.3);
+    }
+    .map-label {
+      position: absolute;
+      z-index: 1;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.88);
+      color: #10263d;
+      font-size: 12px;
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(16,38,61,.08);
+    }
+    .detail {
+      display: grid;
+      gap: 16px;
+    }
+    .focus-card {
+      padding: 20px;
+    }
+    .focus-card h2 { margin: 0 0 8px; font-size: 30px; }
+    .focus-card p { margin: 0; color: #516a80; line-height: 1.7; }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .tag {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #e9f7fb;
+      color: #087da0;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .food-card {
+      padding: 16px;
+    }
+    .food-card h3 { margin: 0 0 8px; font-size: 18px; }
+    .food-card p { margin: 0; color: #516a80; line-height: 1.65; font-size: 14px; }
+    .food-card .mini {
+      margin-top: 10px;
+      color: #0a85a8;
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .reference {
+      padding: 18px;
+    }
+    .reference h2 { margin: 0 0 12px; font-size: 22px; }
+    .ref-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .ref-list a,
+    .ref-list div {
+      display: grid;
+      gap: 5px;
+      padding: 13px;
+      border-radius: 8px;
+      background: #fbfdff;
+      border: 1px solid rgba(16,38,61,.08);
+      color: inherit;
+      text-decoration: none;
+    }
+    .ref-list strong { font-size: 15px; }
+    .ref-list span { color: #516a80; font-size: 13px; line-height: 1.45; }
+    .source-note {
+      padding: 16px;
+      background: #fff7e5;
+      color: #6c5018;
+      line-height: 1.7;
+    }
+    @media (max-width: 980px) {
+      .map-layout { grid-template-columns: 1fr; }
+      .map-panel { position: relative; top: auto; }
+      .okinawa-map { min-height: 560px; }
+    }
+    @media (max-width: 640px) {
+      .hero { min-height: 54vh; padding: 40px 5vw 30px; }
+      .top-nav, main { padding-left: 5vw; padding-right: 5vw; }
+      .food-grid { grid-template-columns: 1fr; }
+      .okinawa-map { min-height: 500px; }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">OKINAWA FOOD MAP</div>
+      <h1>冲绳美食地图</h1>
+      <p>把行程里的餐食建议、小红书参考和 Rednote 美食收集贴放到同一张冲绳地图上。先按区域整理，后面你补具体评论或新店名，我再继续加点位。</p>
+    </div>
+  </section>
+
+  <nav class="top-nav">
+    <a href="index.html">返回行程</a>
+    <a href="#map">地图点位</a>
+    <a href="#refs">参考整理</a>
+  </nav>
+
+  <main>
+    <section class="map-layout" id="map">
+      <aside class="map-panel panel">
+        <div class="map-head">
+          <h2>冲绳本岛餐食坐标</h2>
+          <span>点地图红标切换区域</span>
+        </div>
+        <div class="okinawa-map" aria-label="冲绳美食地图">
+          <div class="island-shape"></div>
+          <div class="route-line"></div>
+          <button class="pin is-active" style="left: 42%; top: 64%;" data-area="chatan"><span>1</span></button>
+          <button class="pin" style="left: 46%; top: 48%;" data-area="onna"><span>2</span></button>
+          <button class="pin" style="left: 43%; top: 26%;" data-area="motobu"><span>3</span></button>
+          <button class="pin" style="left: 49%; top: 86%;" data-area="naha"><span>4</span></button>
+          <button class="pin" style="left: 35%; top: 73%;" data-area="senaga"><span>5</span></button>
+          <div class="map-label" style="left: 45%; top: 20%;">本部 / 名护</div>
+          <div class="map-label" style="left: 50%; top: 44%;">恩纳 / 月亮滩</div>
+          <div class="map-label" style="left: 26%; top: 63%;">美国村</div>
+          <div class="map-label" style="left: 53%; top: 88%;">那霸 / 国际通</div>
+        </div>
+      </aside>
+
+      <div class="detail">
+        <section class="focus-card panel" id="areaFocus"></section>
+        <section class="food-grid" id="foodGrid"></section>
+      </div>
+    </section>
+
+    <section class="reference panel" id="refs">
+      <h2>小红书 / Rednote 参考整理</h2>
+      <ul class="ref-list">
+        <li>
+          <a href="https://www.rednote.com/explore/6a35f711000000000e021801?xsec_token=ABDrF0yx9i4JKM0N0NPLPMPnNgOY9fv4GmcvTtHeunC1M=&xsec_source=pc_user" target="_blank" rel="noreferrer">
+            <strong>七月底准备第三次开启冲绳之旅</strong>
+            <span>Rednote 美食收集贴：作者想集中收集“印象深刻的一餐”，当前公开页显示 465 赞、731 收藏、393 评论。</span>
+          </a>
+        </li>
+        <li><div><strong>美国村区域</strong><span>小红书现有参考更偏日落、逛吃、夜景；适合把 The Calif Kitchen、Seaside Cafe Hanon、Blue Seal 作为边逛边吃点位。</span></div></li>
+        <li><div><strong>月亮滩 / 恩纳区域</strong><span>有“月亮滩博物馆酒店餐饮/项目相关”参考，适合放酒店附近轻食、午餐和浮潜前后补给。</span></div></li>
+        <li><div><strong>本部 / 名护区域</strong><span>水族馆前后建议走快速补能路线：きしもと食堂、Pizza Cafe Kajinhou、Captain Kangaroo。</span></div></li>
+        <li><div><strong>国际通区域</strong><span>小红书参考集中在“国际通值不值得逛”和“真的很好逛”，适合把饭团、冲绳料理、牧志市场串成午餐路线。</span></div></li>
+      </ul>
+    </section>
+
+    <section class="source-note panel">
+      后续整理方式：你把 Rednote 评论里出现的店名、点赞高的建议或大家群里想吃的内容发我，我会继续拆成“店名 / 区域 / 推荐菜 / 适合时段”，并在地图上新增坐标。
+    </section>
+  </main>
+
+  <script>
+    const areas = {
+      chatan: {
+        title: "美国村 / 北谷",
+        summary: "Day 1 傍晚逛吃主场，适合日落前后轻松吃甜点、汉堡、海景餐。",
+        tags: ["Sunset", "Dessert", "Easy dinner"],
+        foods: [
+          ["The Calif Kitchen Okinawa", "海景早午餐/晚餐氛围店，适合坐窗边或露台，看美国村海岸线。", "推荐：海景座位、汉堡、甜点"],
+          ["Seaside Cafe Hanon", "美国村人气松饼咖啡店，甜口下午茶很适合日落前垫一下。", "推荐：舒芙蕾松饼、咖啡"],
+          ["Blue Seal Ice Cream", "冲绳经典冰淇淋，紫薯、盐金楚糕、芒果口味都很有当地感。", "推荐：边走边吃，拍照好看"]
+        ]
+      },
+      onna: {
+        title: "恩纳 / 月亮滩",
+        summary: "浮潜、酒店集合和北上前的补给区，适合安排轻午餐，不要吃太撑再下水。",
+        tags: ["Hotel beach", "Lunch", "Snorkeling"],
+        foods: [
+          ["Moon Beach 周边餐饮", "酒店附近解决午餐或轻食，减少北上前绕路。", "推荐：轻食、饮料、儿童友好选择"],
+          ["58 号线沿线餐厅", "去万座毛前顺路找餐厅，停车和出餐速度比网红店更重要。", "推荐：冲绳 soba、定食、咖啡"],
+          ["月亮滩小红书参考", "已有“月亮滩博物馆酒店餐饮/项目相关”参考，后续可补具体餐厅名。", "推荐：先作为备选池"]
+        ]
+      },
+      motobu: {
+        title: "本部 / 名护 / 水族馆周边",
+        summary: "Day 2 北部线重点补能区，适合水族馆前后吃，不建议排太久影响返程。",
+        tags: ["Aquarium", "Okinawa soba", "Burger"],
+        foods: [
+          ["きしもと食堂 Kishimoto Shokudo", "本部老牌冲绳荞麦面，适合水族馆前后快速解决一餐。", "推荐：冲绳 soba、三枚肉"],
+          ["Pizza Cafe Kajinhou 花人逢", "山坡海景 Pizza 名店，视野很强，但热门时段可能排队，适合不赶时间。", "推荐：Pizza、海景座"],
+          ["Captain Kangaroo", "名护/本部方向很受欢迎的汉堡选择，北部自驾中途补能很合适。", "推荐：美式汉堡、薯条"]
+        ]
+      },
+      naha: {
+        title: "那霸 / 国际通",
+        summary: "Day 3 市区逛吃核心，适合午餐、伴手礼、小吃和市场组合。",
+        tags: ["Kokusai Dori", "Market", "Shopping"],
+        foods: [
+          ["猪肉蛋饭团本店", "国际通附近很适合买来边走边吃，适合作为第一站小食。", "推荐：海葡萄、炸虾、苦瓜组合"],
+          ["ゆうなんぎい Yunangi", "那霸老牌冲绳料理，想吃海葡萄、豆腐、拉夫提、苦瓜炒蛋可以放这里。", "推荐：冲绳家常菜"],
+          ["第一牧志公设市场", "海鲜、猪肉料理、伴手礼集中区，适合分头买、楼上加工或附近找小店。", "推荐：海鲜、当地食材"]
+        ]
+      },
+      senaga: {
+        title: "濑长岛 / 生日局备选",
+        summary: "傍晚看夕阳、飞机起降和生日氛围更合适；具体吃什么等后续确定 BBQ 或餐厅。",
+        tags: ["Sunset", "Birthday", "BBQ"],
+        foods: [
+          ["Umikaji Terrace", "适合轻松散步、甜品和饮料，晚霞好看。", "推荐：夕阳时段"],
+          ["海边 BBQ 方向", "如果要更有仪式感，需要提前预约并确认雨天方案。", "推荐：生日局、蛋糕保存"],
+          ["待补餐厅", "这里先保留地图点位，等你确定生日餐或 BBQ 场地后再细化。", "推荐：后续更新"]
+        ]
+      }
+    };
+
+    const focus = document.querySelector("#areaFocus");
+    const foodGrid = document.querySelector("#foodGrid");
+    const pins = document.querySelectorAll(".pin");
+
+    function renderArea(key) {
+      const area = areas[key];
+      focus.innerHTML = `
+        <h2>${area.title}</h2>
+        <p>${area.summary}</p>
+        <div class="tag-row">${area.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
+      `;
+      foodGrid.innerHTML = area.foods.map(([name, desc, mini]) => `
+        <article class="food-card panel">
+          <h3>${name}</h3>
+          <p>${desc}</p>
+          <div class="mini">${mini}</div>
+        </article>
+      `).join("");
+      pins.forEach((pin) => pin.classList.toggle("is-active", pin.dataset.area === key));
+    }
+
+    pins.forEach((pin) => pin.addEventListener("click", () => renderArea(pin.dataset.area)));
+    renderArea("chatan");
+  </script>
+</body>
+</html>
