@@ -98,6 +98,31 @@
       line-height: 1.65;
       font-size: 14px;
     }
+    .confirmed-panel {
+      background: #fff8f0;
+      border-bottom-color: rgba(255,116,68,.22);
+    }
+    .confirmed-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .confirmed-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #ff2442;
+      color: #fff;
+      border: 0;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(255,36,66,.2);
+    }
     .area-list {
       display: grid;
       gap: 10px;
@@ -184,7 +209,31 @@
       border: 1px solid rgba(16,38,61,.08);
       background: #fbfdff;
     }
+    .candidate.is-confirmed {
+      border-color: rgba(255,36,66,.32);
+      background: linear-gradient(180deg, #fff7f8, #fff);
+      box-shadow: 0 12px 26px rgba(255,36,66,.1);
+    }
+    .name-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
     .candidate strong { display: block; margin-bottom: 6px; }
+    .candidate .name-row strong { margin-bottom: 0; }
+    .confirmed-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: #ff2442;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 950;
+    }
     .candidate p { margin: 0; color: #516a80; line-height: 1.55; font-size: 13px; }
     .candidate small {
       display: block;
@@ -237,6 +286,19 @@
       border: 3px solid #fff;
       box-shadow: 0 10px 20px rgba(16,38,61,.26);
     }
+    .confirmed-marker {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #ff2442;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 950;
+      border: 3px solid #fff;
+      box-shadow: 0 12px 24px rgba(255,36,66,.34);
+    }
     .leaflet-popup-content-wrapper {
       border-radius: 8px;
       box-shadow: 0 14px 34px rgba(16,38,61,.18);
@@ -278,6 +340,12 @@
       <section class="panel">
         <h2>整理原则</h2>
         <p>这一页暂时不把所有候选店当成最终推荐。先按小红书评论、图片、群里留言和行程需求做“候选池”，确认后再标成正式餐厅。</p>
+      </section>
+
+      <section class="panel confirmed-panel">
+        <h2>已确定店名</h2>
+        <p>先把评论里已经出现明确店名的放在这里。点击店名会跳到对应地图区域；具体坐标后面再用 Google Maps 链接校准。</p>
+        <div class="confirmed-list" id="confirmedList"></div>
       </section>
 
       <section class="area-list" id="areaList"></section>
@@ -377,16 +445,31 @@
       }
     };
 
+    const confirmedStores = [
+      { name: "ぶち 久茂地店", area: "naha" },
+      { name: "琉球的牛 / 琉球之牛", area: "naha" },
+      { name: "EIBUN soba", area: "naha" },
+      { name: "lion 烤肉", area: "naha" },
+      { name: "肉之一心", area: "naha" },
+      { name: "ぼくぼく亭", area: "naha" },
+      { name: "泊港渔市场", area: "naha" },
+      { name: "鱼屋食堂", area: "naha" },
+      { name: "石恒牛", area: "naha" },
+      { name: "鶴龜合戰", area: "naha" }
+    ];
+    const confirmedStoreNames = new Set(confirmedStores.map((store) => store.name));
+
     areas.naha.candidates.unshift(
-      ["ぶち 久茂地店", "评论里多人追问后补出的明确店名，适合查完营业时间后放 Day 3。", "小红书评论 / 高优先级"],
-      ["琉球的牛 / 琉球之牛", "多人提到的和牛烤肉候选；也有反馈觉得贵腻，适合写成评价分化。", "小红书评论 / 烤肉"],
-      ["EIBUN soba", "评论推荐 EIBUN soba，重点是拌面，适合国际通附近逛吃。", "小红书评论 / Soba"],
-      ["lion 烤肉", "和 EIBUN 同条评论出现，先作为那霸烤肉候选。", "小红书评论 / 待查坐标"],
-      ["肉之一心", "评论建议最后加冲绳 soba，偏肉料理/烤肉方向。", "小红书评论 / 待查坐标"],
-      ["ぼくぼく亭", "评论推荐芝士流心汉堡肉。", "小红书评论 / 汉堡肉"],
-      ["泊港渔市场", "明确地点，适合海鲜方向。", "小红书评论 / 市场"],
-      ["鱼屋食堂", "评论出现明确店名，但信息少，先放候选。", "小红书评论 / 待查"],
-      ["石恒牛", "被拿来和神户牛比较，先列入烤肉方向。", "小红书评论 / 待查具体店"],
+      ["ぶち 久茂地店", "评论里多人追问后补出的明确店名，适合查完营业时间后放 Day 3。", "已确定店名 / 高优先级"],
+      ["琉球的牛 / 琉球之牛", "多人提到的和牛烤肉候选；也有反馈觉得贵腻，适合写成评价分化。", "已确定店名 / 烤肉"],
+      ["EIBUN soba", "评论推荐 EIBUN soba，重点是拌面，适合国际通附近逛吃。", "已确定店名 / Soba"],
+      ["lion 烤肉", "和 EIBUN 同条评论出现，先作为那霸烤肉候选。", "已确定店名 / 待查坐标"],
+      ["肉之一心", "评论建议最后加冲绳 soba，偏肉料理/烤肉方向。", "已确定店名 / 待查坐标"],
+      ["ぼくぼく亭", "评论推荐芝士流心汉堡肉。", "已确定店名 / 汉堡肉"],
+      ["泊港渔市场", "明确地点，适合海鲜方向。", "已确定店名 / 市场"],
+      ["鱼屋食堂", "评论出现明确店名，但信息少，先放候选。", "已确定店名 / 待查"],
+      ["石恒牛", "被拿来和神户牛比较，先列入烤肉方向。", "已确定店名 / 待查具体店"],
+      ["鶴龜合戰", "评论提到店名，并补充咖喱、鸡皮鸡翅方向。", "已确定店名 / 待查坐标"],
       ["老奶奶家常菜小店", "线索是国际通转小巷、本地人多、家常菜；店名未知，先不做正式点。", "小红书评论 / 待补店名"],
       ["老面馆 / 猪软骨面", "线索是市场对面、老店、贩卖机售票，猪软骨面。", "小红书评论 / 待确认具体店"]
     );
@@ -409,6 +492,7 @@
         area: "naha",
         name: "ぶち 久茂地店",
         coords: [26.2168, 127.6811],
+        confirmed: true,
         status: "评论明确店名，坐标按久茂地区域先放，需二次核对。",
         note: "多人追问后补出的店名，适合 Day 3 晚餐或宵夜。"
       },
@@ -416,6 +500,7 @@
         area: "naha",
         name: "琉球的牛 / 琉球之牛",
         coords: [26.2146, 127.6808],
+        confirmed: true,
         status: "区域点：那霸国际通/县厅前一带，需确认具体分店。",
         note: "多人提到的和牛烤肉；评价分化，适合想吃和牛的人。"
       },
@@ -423,6 +508,7 @@
         area: "naha",
         name: "EIBUN soba",
         coords: [26.2170, 127.6905],
+        confirmed: true,
         status: "评论候选点，需补 Google Maps 链接。",
         note: "推荐点是拌面，适合 Day 3 国际通附近逛吃。"
       },
@@ -430,6 +516,7 @@
         area: "naha",
         name: "泊港渔市场",
         coords: [26.2286, 127.6846],
+        confirmed: true,
         status: "地点明确，适合海鲜方向。",
         note: "市场类候选，适合想吃海鲜或顺路补一餐。"
       },
@@ -437,6 +524,7 @@
         area: "naha",
         name: "肉之一心",
         coords: [26.2162, 127.6815],
+        confirmed: true,
         status: "区域点：久茂地/国际通一带，需确认坐标。",
         note: "评论建议最后加冲绳 soba。"
       },
@@ -444,6 +532,7 @@
         area: "naha",
         name: "ぼくぼく亭",
         coords: [26.2160, 127.6836],
+        confirmed: true,
         status: "区域点：那霸市区，需确认坐标。",
         note: "评论推荐芝士流心汉堡肉。"
       },
@@ -451,8 +540,25 @@
         area: "naha",
         name: "鱼屋食堂",
         coords: [26.2245, 127.6845],
+        confirmed: true,
         status: "区域点：泊港/那霸市区，需确认坐标。",
         note: "评论出现明确店名，但信息少。"
+      },
+      {
+        area: "naha",
+        name: "石恒牛",
+        coords: [26.2142, 127.6818],
+        confirmed: true,
+        status: "区域点：那霸国际通一带，需确认具体店址。",
+        note: "评论说比神户牛好吃，同行也对这家有兴趣。"
+      },
+      {
+        area: "naha",
+        name: "鶴龜合戰",
+        coords: [26.2164, 127.6824],
+        confirmed: true,
+        status: "区域点：那霸市区，需确认具体店址。",
+        note: "评论提到店名，并补充咖喱、鸡皮鸡翅方向。"
       },
       {
         area: "chatan",
@@ -510,7 +616,16 @@
       popupAnchor: [0, -14]
     });
 
+    const confirmedIcon = L.divIcon({
+      className: "",
+      html: '<div class="confirmed-marker">店</div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -17]
+    });
+
     const areaList = document.querySelector("#areaList");
+    const confirmedList = document.querySelector("#confirmedList");
     const detailDrawer = document.querySelector("#detailDrawer");
     const markers = {};
 
@@ -524,8 +639,11 @@
         </div>
         <div class="candidate-list">
           ${area.candidates.map(([name, desc, note]) => `
-            <article class="candidate">
-              <strong>${name}</strong>
+            <article class="candidate ${confirmedStoreNames.has(name) ? "is-confirmed" : ""}">
+              <div class="name-row">
+                <strong>${name}</strong>
+                ${confirmedStoreNames.has(name) ? '<span class="confirmed-badge">已确定店名</span>' : ""}
+              </div>
               <p>${desc}</p>
               <small>${note}</small>
             </article>
@@ -554,12 +672,21 @@
       areaList.appendChild(button);
     });
 
+    confirmedStores.forEach((store) => {
+      const button = document.createElement("button");
+      button.className = "confirmed-chip";
+      button.type = "button";
+      button.textContent = store.name;
+      button.addEventListener("click", () => renderArea(store.area));
+      confirmedList.appendChild(button);
+    });
+
     restaurantPoints.forEach((point) => {
-      const marker = L.marker(point.coords, { icon: storeIcon }).addTo(map);
+      const marker = L.marker(point.coords, { icon: point.confirmed ? confirmedIcon : storeIcon }).addTo(map);
       marker.bindPopup(`
         <strong>${point.name}</strong><br>
         <span>${point.note}</span><br>
-        <small>${point.status}</small>
+        <small>${point.confirmed ? "已确定店名。 " : ""}${point.status}</small>
       `);
       marker.on("click", () => {
         if (areas[point.area]) renderArea(point.area);
