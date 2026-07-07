@@ -298,9 +298,59 @@
       border-radius: 999px;
       background: #10263d;
       color: #fff;
+      border: 0;
       text-decoration: none;
       font-size: 12px;
       font-weight: 900;
+      cursor: pointer;
+    }
+    .google-panel {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      bottom: 18px;
+      z-index: 900;
+      width: min(430px, calc(100vw - 410px));
+      display: none;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(16,38,61,.12);
+      box-shadow: 0 22px 60px rgba(16,38,61,.22);
+    }
+    .google-panel.is-open { display: flex; flex-direction: column; }
+    .google-panel-head {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px 10px 16px;
+      border-bottom: 1px solid rgba(16,38,61,.1);
+    }
+    .google-panel-title {
+      min-width: 0;
+      font-size: 16px;
+      font-weight: 950;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .google-panel-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(16,38,61,.18);
+      background: #fff;
+      color: #10263d;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .google-panel iframe {
+      flex: 1;
+      width: 100%;
+      border: 0;
     }
     @media (max-width: 980px) {
       .shell { grid-template-columns: 1fr; }
@@ -317,6 +367,13 @@
       #foodMap {
         position: relative;
         min-height: 62vh;
+      }
+      .google-panel {
+        position: fixed;
+        inset: 0;
+        width: auto;
+        border-radius: 0;
+        z-index: 2000;
       }
     }
   </style>
@@ -371,6 +428,13 @@
 
     <main class="map-wrap">
       <div id="foodMap" aria-label="真实冲绳地图"></div>
+      <section class="google-panel" id="googlePanel" aria-label="Google 地图详情">
+        <div class="google-panel-head">
+          <div class="google-panel-title" id="googlePanelTitle">Google 地图详情</div>
+          <button class="google-panel-close" id="googlePanelClose" type="button" aria-label="关闭">×</button>
+        </div>
+        <iframe id="googlePanelFrame" title="Google 地图详情" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </section>
     </main>
   </div>
 
@@ -624,14 +688,29 @@
 
     const areaList = document.querySelector("#areaList");
     const confirmedList = document.querySelector("#confirmedList");
+    const googlePanel = document.querySelector("#googlePanel");
+    const googlePanelTitle = document.querySelector("#googlePanelTitle");
+    const googlePanelFrame = document.querySelector("#googlePanelFrame");
+    const googlePanelClose = document.querySelector("#googlePanelClose");
     const markers = {};
 
-    function googleMapUrl(point) {
-      if (point.googleUrl) return point.googleUrl;
+    function googleEmbedUrl(point) {
+      if (point.googleEmbedUrl) return point.googleEmbedUrl;
       const areaLabel = areas[point.area]?.label || "冲绳";
       const query = `${point.name} ${areaLabel} 沖縄`;
-      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+      return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
     }
+
+    function openGooglePanel(point) {
+      googlePanelTitle.textContent = point.name;
+      googlePanelFrame.src = googleEmbedUrl(point);
+      googlePanel.classList.add("is-open");
+    }
+
+    googlePanelClose.addEventListener("click", () => {
+      googlePanel.classList.remove("is-open");
+      googlePanelFrame.src = "";
+    });
 
     function renderArea(key) {
       const area = areas[key];
@@ -666,18 +745,27 @@
       confirmedList.appendChild(button);
     });
 
-    restaurantPoints.forEach((point) => {
+    restaurantPoints.forEach((point, index) => {
       const marker = L.marker(point.coords, { icon: point.confirmed ? confirmedIcon : storeIcon }).addTo(map);
-      const mapUrl = googleMapUrl(point);
+      const actionId = `mapDetail-${index}`;
       marker.bindPopup(`
         <strong>${point.name}</strong><br>
         <span>${point.note}</span><br>
         <small>${point.confirmed ? "已确定店名。 " : ""}${point.status}</small><br>
-        <a class="map-link" href="${mapUrl}" target="_blank" rel="noreferrer">Google 地图详情</a>
+        <button class="map-link" type="button" data-map-detail="${actionId}">Google 地图详情</button>
       `);
+      point.actionId = actionId;
       marker.on("click", () => {
         marker.openPopup();
       });
+    });
+
+    map.on("popupopen", (event) => {
+      const button = event.popup.getElement()?.querySelector("[data-map-detail]");
+      if (!button) return;
+      const point = restaurantPoints.find((item) => item.actionId === button.dataset.mapDetail);
+      if (!point) return;
+      button.addEventListener("click", () => openGooglePanel(point));
     });
 
     map.setView(areas.naha.coords, 12);
