@@ -323,8 +323,20 @@
     }
     @media (max-width: 980px) {
       .shell { grid-template-columns: 1fr; }
-      .sidebar { max-height: none; }
-      .map-wrap, #foodMap { min-height: 72vh; }
+      .sidebar {
+        max-height: none;
+        order: 2;
+      }
+      .map-wrap {
+        order: 1;
+        min-height: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      #foodMap {
+        position: relative;
+        min-height: 62vh;
+      }
       .detail-drawer {
         position: relative;
         inset: auto;
