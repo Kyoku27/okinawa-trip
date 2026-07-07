@@ -254,19 +254,6 @@
       transform: rotate(-45deg);
     }
     .food-marker span { transform: rotate(45deg); }
-    .store-marker {
-      display: grid;
-      place-items: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: #10263d;
-      color: #fff;
-      font-size: 12px;
-      font-weight: 950;
-      border: 3px solid #fff;
-      box-shadow: 0 10px 20px rgba(16,38,61,.26);
-    }
     .confirmed-marker {
       display: grid;
       place-items: center;
@@ -621,34 +608,6 @@
         confirmed: true,
         status: "区域点：那霸市区，需确认具体店址。",
         note: "评论提到店名，并补充咖喱、鸡皮鸡翅方向。"
-      },
-      {
-        area: "chatan",
-        name: "美国村汉堡线索",
-        coords: [26.3154, 127.7564],
-        status: "区域点：店名待补。",
-        note: "评论说美国村某家汉堡很惊艳。"
-      },
-      {
-        area: "chatan",
-        name: "美国村披萨线索",
-        coords: [26.3162, 127.7560],
-        status: "区域点：店名待补。",
-        note: "作者回复提到美国村的披萨店去过两次。"
-      },
-      {
-        area: "onna",
-        name: "月亮滩附近 taco 线索",
-        coords: [26.4528, 127.8028],
-        status: "区域点：店名待补。",
-        note: "评论说月亮滩附近有一家 taco 好吃，适合浮潜后午餐。"
-      },
-      {
-        area: "senaga",
-        name: "生日 BBQ 方向",
-        coords: [26.1749, 127.6464],
-        status: "方案点：不是具体餐厅。",
-        note: "评论建议自己买食材烤肉，可和生日 BBQ 结合。"
       }
     ];
 
@@ -668,14 +627,6 @@
       iconSize: [32, 32],
       iconAnchor: [16, 30],
       popupAnchor: [0, -28]
-    });
-
-    const storeIcon = L.divIcon({
-      className: "",
-      html: '<div class="store-marker">评</div>',
-      iconSize: [28, 28],
-      iconAnchor: [14, 14],
-      popupAnchor: [0, -14]
     });
 
     const confirmedIcon = L.divIcon({
@@ -746,7 +697,7 @@
     });
 
     restaurantPoints.forEach((point, index) => {
-      const marker = L.marker(point.coords, { icon: point.confirmed ? confirmedIcon : storeIcon }).addTo(map);
+      const marker = L.marker(point.coords, { icon: confirmedIcon }).addTo(map);
       const actionId = `mapDetail-${index}`;
       marker.bindPopup(`
         <strong>${point.name}</strong><br>
