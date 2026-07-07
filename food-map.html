@@ -708,7 +708,7 @@
         <strong>${point.name}</strong><br>
         <span>${point.note}</span><br>
         <small>${point.confirmed ? "已确定店名。 " : ""}${point.status}</small><br>
-        <a class="map-link" href="${mapUrl}" target="_blank" rel="noreferrer">打开 Google 地图</a>
+        <a class="map-link" href="${mapUrl}" target="_blank" rel="noreferrer">Google 地图详情</a>
       `);
       marker.on("click", () => {
         if (areas[point.area]) renderArea(point.area);
