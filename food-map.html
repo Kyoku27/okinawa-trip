@@ -308,6 +308,19 @@
       color: #10263d;
       line-height: 1.45;
     }
+    .map-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      margin-top: 9px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #10263d;
+      color: #fff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 900;
+    }
     @media (max-width: 980px) {
       .shell { grid-template-columns: 1fr; }
       .sidebar { max-height: none; }
@@ -629,6 +642,13 @@
     const detailDrawer = document.querySelector("#detailDrawer");
     const markers = {};
 
+    function googleMapUrl(point) {
+      if (point.googleUrl) return point.googleUrl;
+      const areaLabel = areas[point.area]?.label || "冲绳";
+      const query = `${point.name} ${areaLabel} 沖縄`;
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    }
+
     function renderArea(key) {
       const area = areas[key];
       detailDrawer.innerHTML = `
@@ -683,10 +703,12 @@
 
     restaurantPoints.forEach((point) => {
       const marker = L.marker(point.coords, { icon: point.confirmed ? confirmedIcon : storeIcon }).addTo(map);
+      const mapUrl = googleMapUrl(point);
       marker.bindPopup(`
         <strong>${point.name}</strong><br>
         <span>${point.note}</span><br>
-        <small>${point.confirmed ? "已确定店名。 " : ""}${point.status}</small>
+        <small>${point.confirmed ? "已确定店名。 " : ""}${point.status}</small><br>
+        <a class="map-link" href="${mapUrl}" target="_blank" rel="noreferrer">打开 Google 地图</a>
       `);
       marker.on("click", () => {
         if (areas[point.area]) renderArea(point.area);
