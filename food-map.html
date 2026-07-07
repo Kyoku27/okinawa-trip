@@ -165,25 +165,6 @@
       min-height: 100vh;
       background: #cceff6;
     }
-    .detail-drawer {
-      position: absolute;
-      right: 22px;
-      top: 22px;
-      z-index: 500;
-      width: min(420px, calc(100vw - 420px));
-      max-height: calc(100vh - 44px);
-      overflow: auto;
-      border-radius: 8px;
-      background: rgba(255,255,255,.96);
-      border: 1px solid rgba(16,38,61,.1);
-      box-shadow: 0 18px 52px rgba(16,38,61,.18);
-    }
-    .detail-head {
-      padding: 18px 18px 14px;
-      border-bottom: 1px solid rgba(16,38,61,.08);
-    }
-    .detail-head h2 { margin: 0 0 8px; font-size: 24px; }
-    .detail-head p { margin: 0; color: #516a80; line-height: 1.65; }
     .tag-row {
       display: flex;
       flex-wrap: wrap;
@@ -337,13 +318,6 @@
         position: relative;
         min-height: 62vh;
       }
-      .detail-drawer {
-        position: relative;
-        inset: auto;
-        width: auto;
-        max-height: none;
-        margin: 14px;
-      }
     }
   </style>
 </head>
@@ -397,7 +371,6 @@
 
     <main class="map-wrap">
       <div id="foodMap" aria-label="真实冲绳地图"></div>
-      <section class="detail-drawer" id="detailDrawer"></section>
     </main>
   </div>
 
@@ -651,7 +624,6 @@
 
     const areaList = document.querySelector("#areaList");
     const confirmedList = document.querySelector("#confirmedList");
-    const detailDrawer = document.querySelector("#detailDrawer");
     const markers = {};
 
     function googleMapUrl(point) {
@@ -663,25 +635,6 @@
 
     function renderArea(key) {
       const area = areas[key];
-      detailDrawer.innerHTML = `
-        <div class="detail-head">
-          <h2>${area.label}</h2>
-          <p>${area.summary}</p>
-          <div class="tag-row">${area.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-        </div>
-        <div class="candidate-list">
-          ${area.candidates.map(([name, desc, note]) => `
-            <article class="candidate ${confirmedStoreNames.has(name) ? "is-confirmed" : ""}">
-              <div class="name-row">
-                <strong>${name}</strong>
-                ${confirmedStoreNames.has(name) ? '<span class="confirmed-badge">已确定店名</span>' : ""}
-              </div>
-              <p>${desc}</p>
-              <small>${note}</small>
-            </article>
-          `).join("")}
-        </div>
-      `;
       document.querySelectorAll(".area-card").forEach((card) => {
         card.classList.toggle("is-active", card.dataset.area === key);
       });
@@ -723,12 +676,12 @@
         <a class="map-link" href="${mapUrl}" target="_blank" rel="noreferrer">Google 地图详情</a>
       `);
       marker.on("click", () => {
-        if (areas[point.area]) renderArea(point.area);
         marker.openPopup();
       });
     });
 
-    renderArea("naha");
+    map.setView(areas.naha.coords, 12);
+    markers.naha.openPopup();
   </script>
 </body>
 </html>
